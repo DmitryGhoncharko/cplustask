@@ -3,7 +3,6 @@
 #include <vector>
 #include <algorithm>
 #include <string>
-#include <iomanip>
 
 using namespace std;
 
@@ -55,7 +54,16 @@ void createFile(const string& filename) {
         getline(cin, record.address);
         cout << "Введите дату учета (гггг-мм-дд): ";
         getline(cin, record.date);
-        file.write(reinterpret_cast<char*>(&record), sizeof(record));
+        file.write(reinterpret_cast<const char*>(&record.number), sizeof(record.number));
+        size_t nameLength = record.name.size();
+        file.write(reinterpret_cast<const char*>(&nameLength), sizeof(nameLength));
+        file.write(record.name.c_str(), nameLength);
+        size_t addressLength = record.address.size();
+        file.write(reinterpret_cast<const char*>(&addressLength), sizeof(addressLength));
+        file.write(record.address.c_str(), addressLength);
+        size_t dateLength = record.date.size();
+        file.write(reinterpret_cast<const char*>(&dateLength), sizeof(dateLength));
+        file.write(record.date.c_str(), dateLength);
     }
     file.close();
 }
@@ -67,7 +75,19 @@ void viewFile(const string& filename) {
         return;
     }
     Record record;
-    while (file.read(reinterpret_cast<char*>(&record), sizeof(record))) {
+    while (file.read(reinterpret_cast<char*>(&record.number), sizeof(record.number))) {
+        size_t nameLength;
+        file.read(reinterpret_cast<char*>(&nameLength), sizeof(nameLength));
+        record.name.resize(nameLength);
+        file.read(&record.name[0], nameLength);
+        size_t addressLength;
+        file.read(reinterpret_cast<char*>(&addressLength), sizeof(addressLength));
+        record.address.resize(addressLength);
+        file.read(&record.address[0], addressLength);
+        size_t dateLength;
+        file.read(reinterpret_cast<char*>(&dateLength), sizeof(dateLength));
+        record.date.resize(dateLength);
+        file.read(&record.date[0], dateLength);
         cout << "Номер: " << record.number << "\nФИО: " << record.name
              << "\nДомашний адрес: " << record.address << "\nДата учета: " << record.date << endl << endl;
     }
@@ -90,7 +110,16 @@ void addRecord(const string& filename) {
     getline(cin, record.address);
     cout << "Введите дату учета (гггг-мм-дд): ";
     getline(cin, record.date);
-    file.write(reinterpret_cast<char*>(&record), sizeof(record));
+    file.write(reinterpret_cast<const char*>(&record.number), sizeof(record.number));
+    size_t nameLength = record.name.size();
+    file.write(reinterpret_cast<const char*>(&nameLength), sizeof(nameLength));
+    file.write(record.name.c_str(), nameLength);
+    size_t addressLength = record.address.size();
+    file.write(reinterpret_cast<const char*>(&addressLength), sizeof(addressLength));
+    file.write(record.address.c_str(), addressLength);
+    size_t dateLength = record.date.size();
+    file.write(reinterpret_cast<const char*>(&dateLength), sizeof(dateLength));
+    file.write(record.date.c_str(), dateLength);
     file.close();
 }
 
@@ -102,7 +131,19 @@ void linearSearch(const string& filename, const string& key) {
     }
     Record record;
     bool found = false;
-    while (file.read(reinterpret_cast<char*>(&record), sizeof(record))) {
+    while (file.read(reinterpret_cast<char*>(&record.number), sizeof(record.number))) {
+        size_t nameLength;
+        file.read(reinterpret_cast<char*>(&nameLength), sizeof(nameLength));
+        record.name.resize(nameLength);
+        file.read(&record.name[0], nameLength);
+        size_t addressLength;
+        file.read(reinterpret_cast<char*>(&addressLength), sizeof(addressLength));
+        record.address.resize(addressLength);
+        file.read(&record.address[0], addressLength);
+        size_t dateLength;
+        file.read(reinterpret_cast<char*>(&dateLength), sizeof(dateLength));
+        record.date.resize(dateLength);
+        file.read(&record.date[0], dateLength);
         if (record.date == key) {
             cout << "Номер: " << record.number << "\nФИО: " << record.name
                  << "\nДомашний адрес: " << record.address << "\nДата учета: " << record.date << endl << endl;
@@ -175,7 +216,19 @@ void removeDuplicates(const string& filename) {
     }
     vector<Record> records;
     Record record;
-    while (file.read(reinterpret_cast<char*>(&record), sizeof(record))) {
+    while (file.read(reinterpret_cast<char*>(&record.number), sizeof(record.number))) {
+        size_t nameLength;
+        file.read(reinterpret_cast<char*>(&nameLength), sizeof(nameLength));
+        record.name.resize(nameLength);
+        file.read(&record.name[0], nameLength);
+        size_t addressLength;
+        file.read(reinterpret_cast<char*>(&addressLength), sizeof(addressLength));
+        record.address.resize(addressLength);
+        file.read(&record.address[0], addressLength);
+        size_t dateLength;
+        file.read(reinterpret_cast<char*>(&dateLength), sizeof(dateLength));
+        record.date.resize(dateLength);
+        file.read(&record.date[0], dateLength);
         records.push_back(record);
     }
     file.close();
@@ -195,7 +248,16 @@ void removeDuplicates(const string& filename) {
         return;
     }
     for (const auto& rec : records) {
-        outFile.write(reinterpret_cast<const char*>(&rec), sizeof(rec));
+        outFile.write(reinterpret_cast<const char*>(&rec.number), sizeof(rec.number));
+        size_t nameLength = rec.name.size();
+        outFile.write(reinterpret_cast<const char*>(&nameLength), sizeof(nameLength));
+        outFile.write(rec.name.c_str(), nameLength);
+        size_t addressLength = rec.address.size();
+        outFile.write(reinterpret_cast<const char*>(&addressLength), sizeof(addressLength));
+        outFile.write(rec.address.c_str(), addressLength);
+        size_t dateLength = rec.date.size();
+        outFile.write(reinterpret_cast<const char*>(&dateLength), sizeof(dateLength));
+        outFile.write(rec.date.c_str(), dateLength);
     }
     outFile.close();
 }
@@ -240,7 +302,19 @@ void menu() {
                 }
                 vector<Record> records;
                 Record record;
-                while (file.read(reinterpret_cast<char*>(&record), sizeof(record))) {
+                while (file.read(reinterpret_cast<char*>(&record.number), sizeof(record.number))) {
+                    size_t nameLength;
+                    file.read(reinterpret_cast<char*>(&nameLength), sizeof(nameLength));
+                    record.name.resize(nameLength);
+                    file.read(&record.name[0], nameLength);
+                    size_t addressLength;
+                    file.read(reinterpret_cast<char*>(&addressLength), sizeof(addressLength));
+                    record.address.resize(addressLength);
+                    file.read(&record.address[0], addressLength);
+                    size_t dateLength;
+                    file.read(reinterpret_cast<char*>(&dateLength), sizeof(dateLength));
+                    record.date.resize(dateLength);
+                    file.read(&record.date[0], dateLength);
                     records.push_back(record);
                 }
                 file.close();
@@ -251,7 +325,16 @@ void menu() {
                     break;
                 }
                 for (const auto& rec : records) {
-                    outFile.write(reinterpret_cast<const char*>(&rec), sizeof(rec));
+                    outFile.write(reinterpret_cast<const char*>(&rec.number), sizeof(rec.number));
+                    size_t nameLength = rec.name.size();
+                    outFile.write(reinterpret_cast<const char*>(&nameLength), sizeof(nameLength));
+                    outFile.write(rec.name.c_str(), nameLength);
+                    size_t addressLength = rec.address.size();
+                    outFile.write(reinterpret_cast<const char*>(&addressLength), sizeof(addressLength));
+                    outFile.write(rec.address.c_str(), addressLength);
+                    size_t dateLength = rec.date.size();
+                    outFile.write(reinterpret_cast<const char*>(&dateLength), sizeof(dateLength));
+                    outFile.write(rec.date.c_str(), dateLength);
                 }
                 outFile.close();
                 cout << "Сортировка завершена." << endl;
@@ -265,7 +348,19 @@ void menu() {
                 }
                 vector<Record> records;
                 Record record;
-                while (file.read(reinterpret_cast<char*>(&record), sizeof(record))) {
+                while (file.read(reinterpret_cast<char*>(&record.number), sizeof(record.number))) {
+                    size_t nameLength;
+                    file.read(reinterpret_cast<char*>(&nameLength), sizeof(nameLength));
+                    record.name.resize(nameLength);
+                    file.read(&record.name[0], nameLength);
+                    size_t addressLength;
+                    file.read(reinterpret_cast<char*>(&addressLength), sizeof(addressLength));
+                    record.address.resize(addressLength);
+                    file.read(&record.address[0], addressLength);
+                    size_t dateLength;
+                    file.read(reinterpret_cast<char*>(&dateLength), sizeof(dateLength));
+                    record.date.resize(dateLength);
+                    file.read(&record.date[0], dateLength);
                     records.push_back(record);
                 }
                 file.close();
@@ -276,7 +371,16 @@ void menu() {
                     break;
                 }
                 for (const auto& rec : records) {
-                    outFile.write(reinterpret_cast<const char*>(&rec), sizeof(rec));
+                    outFile.write(reinterpret_cast<const char*>(&rec.number), sizeof(rec.number));
+                    size_t nameLength = rec.name.size();
+                    outFile.write(reinterpret_cast<const char*>(&nameLength), sizeof(nameLength));
+                    outFile.write(rec.name.c_str(), nameLength);
+                    size_t addressLength = rec.address.size();
+                    outFile.write(reinterpret_cast<const char*>(&addressLength), sizeof(addressLength));
+                    outFile.write(rec.address.c_str(), addressLength);
+                    size_t dateLength = rec.date.size();
+                    outFile.write(reinterpret_cast<const char*>(&dateLength), sizeof(dateLength));
+                    outFile.write(rec.date.c_str(), dateLength);
                 }
                 outFile.close();
                 cout << "Сортировка завершена." << endl;
@@ -290,7 +394,19 @@ void menu() {
                 }
                 vector<Record> records;
                 Record record;
-                while (file.read(reinterpret_cast<char*>(&record), sizeof(record))) {
+                while (file.read(reinterpret_cast<char*>(&record.number), sizeof(record.number))) {
+                    size_t nameLength;
+                    file.read(reinterpret_cast<char*>(&nameLength), sizeof(nameLength));
+                    record.name.resize(nameLength);
+                    file.read(&record.name[0], nameLength);
+                    size_t addressLength;
+                    file.read(reinterpret_cast<char*>(&addressLength), sizeof(addressLength));
+                    record.address.resize(addressLength);
+                    file.read(&record.address[0], addressLength);
+                    size_t dateLength;
+                    file.read(reinterpret_cast<char*>(&dateLength), sizeof(dateLength));
+                    record.date.resize(dateLength);
+                    file.read(&record.date[0], dateLength);
                     records.push_back(record);
                 }
                 file.close();
